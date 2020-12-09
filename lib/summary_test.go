@@ -9,15 +9,17 @@ import (
 )
 
 type TestCase struct {
-	stdOutFile string
-	stdErrFile string
-	summary    *TestSummary
+	stdOutFile   string
+	stdErrFile   string
+	coverageFile string
+	summary      *TestSummary
 }
 
 var testCases = []TestCase{
 	{
-		stdOutFile: "01-stdout",
-		stdErrFile: "01-stderr",
+		stdOutFile:   "01-stdout",
+		stdErrFile:   "01-stderr",
+		coverageFile: "01-coverage",
 		summary: &TestSummary{
 			TotalTests:  3,
 			BuildErrors: "",
@@ -45,11 +47,35 @@ var testCases = []TestCase{
 				FAIL: []*Test{},
 				SKIP: []*Test{},
 			},
+			TotalCoverage: 2.58,
+			Coverages:     []*Coverage{
+				{
+					PackageName: "treverLiqgo",
+					Coverage:    0,
+				},
+				{
+					PackageName: "treverLiqgo/common",
+					Coverage:    8.3,
+				},
+				{
+					PackageName: "treverLiqgo/common/influx",
+					Coverage:    0,
+				},
+				{
+					PackageName: "treverLiqgo/toms",
+					Coverage:    4.1,
+				},
+				{
+					PackageName: "treverLiqgo/toms/db",
+					Coverage:    0.5,
+				},
+			},
 		},
 	},
 	{
-		stdOutFile: "02-stdout",
-		stdErrFile: "02-stderr",
+		stdOutFile:   "02-stdout",
+		stdErrFile:   "02-stderr",
+		coverageFile: "02-coverage",
 		summary: &TestSummary{
 			TotalTests:  3,
 			BuildErrors: "",
@@ -79,11 +105,14 @@ var testCases = []TestCase{
 					},
 				},
 			},
+			TotalCoverage: 0,
+			Coverages:     nil,
 		},
 	},
 	{
-		stdOutFile: "03-stdout",
-		stdErrFile: "03-stderr",
+		stdOutFile:   "03-stdout",
+		stdErrFile:   "03-stderr",
+		coverageFile: "03-coverage",
 		summary: &TestSummary{
 			TotalTests:  1,
 			BuildErrors: "build-error",
@@ -99,6 +128,8 @@ var testCases = []TestCase{
 				},
 				SKIP: []*Test{},
 			},
+			TotalCoverage: 0.,
+			Coverages:     nil,
 		},
 	},
 }
@@ -113,7 +144,10 @@ func TestSummaryParser(t *testing.T) {
 		stdoutErr, err := os.Open("tests/" + testCase.stdErrFile)
 		require.NoError(t, err)
 
-		actual, err := Parse(stdoutFile, stdoutErr)
+		coverage, err := os.Open("tests/" + testCase.coverageFile)
+		require.NoError(t, err)
+
+		actual, err := Parse(stdoutFile, stdoutErr, coverage)
 		require.NoError(t, err)
 		require.NotNil(t, actual)
 		assert.EqualValues(t, testCase.summary, actual)

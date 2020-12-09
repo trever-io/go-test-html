@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./lib"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +10,6 @@ import (
 	"path/filepath"
 
 	rice "github.com/GeertJohan/go.rice"
-	"github.com/ains/go-test-html/lib"
 )
 
 func check(err error) {
@@ -19,15 +19,18 @@ func check(err error) {
 }
 
 func main() {
-	if len(os.Args) != 4 {
+	if len(os.Args) != 5 {
 		fmt.Println("Incorrect command line arguments")
-		fmt.Println("Usage: go-test-html [gotest_stdout_file] [gotest_stderr_file] [output_file]")
+		fmt.Println("Usage: go-test-html [gotest_stdout_file] [gotest_stderr_file] [gotest_coverage] [output_file]")
 		os.Exit(1)
 	}
 
+	//"Trever Liqgo version: %v-%v", GitTag, GitCommit
+
 	gotestStdoutFile := os.Args[1]
 	gotestStderrFile := os.Args[2]
-	outputFile := os.Args[3]
+	gotestCoverageFile := os.Args[3]
+	outputFile := os.Args[4]
 
 	gotestStdout, err := os.Open(gotestStdoutFile)
 	check(err)
@@ -35,7 +38,10 @@ func main() {
 	gotestStderr, err := os.Open(gotestStderrFile)
 	check(err)
 
-	summary, err := lib.Parse(gotestStdout, gotestStderr)
+	gotestCoverage, err := os.Open(gotestCoverageFile)
+	check(err)
+
+	summary, err := lib.Parse(gotestStdout, gotestStderr, gotestCoverage)
 	check(err)
 
 	templateBox := rice.MustFindBox("template")
