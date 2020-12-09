@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./lib"
+	"github.com/trever-io/go-test-html/lib"
 	"fmt"
 	"log"
 	"os"
