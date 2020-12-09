@@ -21,7 +21,7 @@ func check(err error) {
 func main() {
 	if len(os.Args) != 6 {
 		fmt.Println("Incorrect command line arguments")
-		fmt.Println("Usage: go-test-html [gotest_stdout_file] [gotest_stderr_file] [gotest_coverage] [output_file]")
+		fmt.Println("Usage: go-test-html [gotest_stdout_file] [gotest_stderr_file] [gotest_coverage] [name] [output_file]")
 		os.Exit(1)
 	}
 
