@@ -19,7 +19,7 @@ func check(err error) {
 }
 
 func main() {
-	if len(os.Args) != 5 {
+	if len(os.Args) != 6 {
 		fmt.Println("Incorrect command line arguments")
 		fmt.Println("Usage: go-test-html [gotest_stdout_file] [gotest_stderr_file] [gotest_coverage] [output_file]")
 		os.Exit(1)
@@ -30,7 +30,8 @@ func main() {
 	gotestStdoutFile := os.Args[1]
 	gotestStderrFile := os.Args[2]
 	gotestCoverageFile := os.Args[3]
-	outputFile := os.Args[4]
+	name := os.Args[4]
+	outputFile := os.Args[5]
 
 	gotestStdout, err := os.Open(gotestStdoutFile)
 	check(err)
@@ -43,6 +44,7 @@ func main() {
 
 	summary, err := lib.Parse(gotestStdout, gotestStderr, gotestCoverage)
 	check(err)
+	summary.Name = name
 
 	templateBox := rice.MustFindBox("template")
 	html, err := lib.GenerateHTML(templateBox.MustString("template.html"), summary)

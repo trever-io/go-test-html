@@ -2,7 +2,6 @@ package lib
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/improbable-io/go-junit-report/parser"
 	"io"
 	"io/ioutil"
@@ -38,6 +37,7 @@ type Coverage struct {
 }
 
 type TestSummary struct {
+	Name          string      `json:"name"`
 	TotalTests    int         `json:"total_tests"`
 	BuildErrors   string      `json:"build_errors"`
 	Results       Results     `json:"results"`
@@ -76,7 +76,6 @@ func Parse(stdoutReader, stderrReader, coverageReader io.Reader) (*TestSummary, 
 
 	var coverages []*Coverage
 	numCoverages, totalCoverage := 0., 0.
-	fmt.Println(totalCoverage)
 	scanner := bufio.NewScanner(coverageReader)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -109,8 +108,6 @@ func Parse(stdoutReader, stderrReader, coverageReader io.Reader) (*TestSummary, 
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(numCoverages, totalCoverage)
 
 	summary := &TestSummary{
 		TotalTests:    totalTests,
